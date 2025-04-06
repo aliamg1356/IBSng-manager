@@ -1,5 +1,4 @@
 📡 Ushkaya Net - IBSng Docker Management Script
-Ushkaya Net Banner
 
 <p align="center"> <strong>یک راه‌حل جامع برای مدیریت IBSng در محیط داکر با قابلیت‌های پیشرفته</strong> </p>
 
