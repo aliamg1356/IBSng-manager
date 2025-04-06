@@ -79,5 +79,5 @@ bash <(curl -s https://raw.githubusercontent.com/aliamg1356/utunnel/refs/heads/m
 
 برای گزارش مشکلات یا پیشنهادات:
 - ایمیل: support@ushkaya-net.ir
-- تلگرام: @freegate2tab_bot
+- تلگرام: https://t.me/freegate2tab_bot
 - Issues گیتهاب
