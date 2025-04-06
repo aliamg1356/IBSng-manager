@@ -1,6 +1,5 @@
 # اسکریپت مدیریت IBSng با داکر - Ushkaya Net
 
-![Ushkaya Net Logo](https://example.com/ushkaya-logo.png)
 
 یک اسکریپت جامع و هوشمند برای مدیریت نصب، پشتیبان‌گیری و بازیابی سرویس IBSng در محیط داکر
 
@@ -16,16 +15,8 @@
 
 ```bash
 # دانلود اسکریپت
-wget https://raw.githubusercontent.com/ushkaya-net/ibsng-manager/main/ibsng_manager.sh
+bash <(curl -s https://raw.githubusercontent.com/aliamg1356/utunnel/refs/heads/main/MonitorBotinstall.sh --ipv4)
 
-# اعتبارسنجی اسکریپت
-sha256sum ibsng_manager.sh
-
-# دادن مجوز اجرا
-chmod +x ibsng_manager.sh
-
-# اجرای اسکریپت
-./ibsng_manager.sh
 ```
 
 ## 🖥️ منوهای اصلی
@@ -60,6 +51,24 @@ chmod +x ibsng_manager.sh
 - سازگار با سیستم‌های مبتنی بر لینوکس
 - پشتیبانی از Docker و Docker Compose
 - قابلیت اجرا روی سرورهای اختصاصی و مجازی
+
+## 💰 حمایت مالی
+
+ما از حمایت شما برای توسعه و بهبود مستمر پروژه قدردانی می‌کنیم:
+
+<div align="center">
+
+| شبکه         | نوع ارز       | آدرس کیف پول                              | آیکون       |
+|--------------|--------------|------------------------------------------|------------|
+| **Tron**     | TRX (TRC20)  | `TMXRpCsbz8PKzqN4koXiErawdLXzeinWbQ`     | <img src="https://cryptologos.cc/logos/tron-trx-logo.png" width="20"> |
+| **Ethereum** | USDT (ERC20) | `0xD4cEBA0cFf6769Fb9EFE4606bE59C363Ff85BF76` | <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" width="20"> |
+
+</div>
+
+<div align="center" style="margin-top: 20px;">
+  <p>🙏 از اعتماد و حمایت ارزشمند شما سپاسگزاریم</p>
+  <p>هر میزان کمک مالی، انگیزه‌ای برای توسعه و ارتقای پروژه خواهد بود</p>
+</div>
 
 
 ## 📜 مجوز
