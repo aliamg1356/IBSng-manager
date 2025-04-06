@@ -34,6 +34,11 @@ bash <(curl -s https://raw.githubusercontent.com/aliamg1356/IBSng-manager/refs/h
 
 ```
 
+یوزر و پسورد پیش فرض
+
+username: system
+
+Pssword:admin
 ## 🖥️ منوهای اصلی
 
 1. **نصب IBSng**: 
