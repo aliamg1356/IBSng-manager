@@ -165,18 +165,26 @@ function check_docker_installation() {
 function get_public_ip() {
     start_time=$SECONDS
     total_steps=1
-    show_progress 1 $total_steps "Getting public IP address..."
+    show_progress 1 $total_steps "Getting server IP address..."
     
-    # Try multiple methods to get public IP
-    PUBLIC_IP=$(curl -s --max-time 5 ifconfig.me || curl -s --max-time 5 icanhazip.com || curl -s --max-time 5 ifconfig.co)
+    MAIN_IP=$(ip route get 1 | awk '{print $7; exit}' 2>/dev/null)
     
-    # Validate IP address format
-    if [[ ! $PUBLIC_IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        echo -e "\n${YELLOW}[!] Could not determine public IP, using 'localhost'${NC}"
-        PUBLIC_IP="localhost"
-    else
-        echo -e "\n${BLUE}[i] Server Public IP: ${PUBLIC_IP}${NC}"
+    if [[ -z "$MAIN_IP" || "$MAIN_IP" =~ ^(127.|172.17.) ]]; then
+        MAIN_IP=$(hostname -I | awk '{print $1}' 2>/dev/null)
     fi
+    
+    if [[ -z "$MAIN_IP" || "$MAIN_IP" =~ ^(127.|172.17.) ]]; then
+        MAIN_IP=$(ip addr show | grep -E 'inet (192\.168|10\.|172\.1[6789]\.|172\.2[0-9]\.|172\.3[01]\.)' | awk '{print $2}' | cut -d/ -f1 | head -n1)
+    fi
+    
+    if [[ -z "$MAIN_IP" ]]; then
+        echo -e "\n${YELLOW}[!] Could not determine server IP, using 'localhost'${NC}"
+        MAIN_IP="localhost"
+    else
+        echo -e "\n${BLUE}[i] Server Main IP: ${MAIN_IP}${NC}"
+    fi
+    
+    PUBLIC_IP=$MAIN_IP
 }
 
 # Function to get ports from user
@@ -391,7 +399,7 @@ function run_container_and_show_info() {
     echo "=============================================="
     echo "         IBSng Access Information"
     echo "=============================================="
-    echo -e "Management Panel: ${BLUE}http://${PUBLIC_IP}:${WEB_PORT}/IBSng/admin/${NC}"
+    echo -e "Management Panel: ${BLUE}http://${MAIN_IP}:${WEB_PORT}/IBSng/admin/${NC}"
     echo -e "Username: ${YELLOW}system${NC}"
     echo -e "Password: ${YELLOW}admin${NC}"
     echo "=============================================="
