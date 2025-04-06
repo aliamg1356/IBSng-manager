@@ -30,7 +30,7 @@
 ## 🛠️ نحوه استفاده
 
 ```bash
-bash <(curl -s [https://raw.githubusercontent.com/aliamg1356/IBSng-manager/refs/heads/main/ibsng.sh --ipv4)
+bash <(curl -s https://raw.githubusercontent.com/aliamg1356/IBSng-manager/refs/heads/main/ibsng.sh --ipv4)
 
 ```
 
