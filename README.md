@@ -72,6 +72,26 @@ Pssword:admin
 - پشتیبانی از Docker و Docker Compose
 - قابلیت اجرا روی سرورهای اختصاصی و مجازی
 
+
+ریستور بکاپ از IBSng 
+
+اگر بکاپی از خود ibsng  دارین برای ریستور به این دارک اول فایل دامپ رو به IBSng.bak تغییر نام داده و در /root کپی کنید بعد دستورات زیر رو به ترتیب وارد کنید
+```
+docker cp /root/IBSng.bak ibsng:/var/lib/pgsql/IBSng.bak
+
+docker exec -it ibsng /bin/bash
+service IBSng stop
+su - postgres
+dropdb IBSng
+createdb IBSng
+createlang plpgsql IBSng
+psql IBSng < IBSng.bak
+exit
+service IBSng start
+```
+بعد با ctrl+d از محیط کانتینر خارج شوید
+
+
 ## 💰 حمایت مالی
 
 ما از حمایت شما برای توسعه و بهبود مستمر پروژه قدردانی می‌کنیم:
