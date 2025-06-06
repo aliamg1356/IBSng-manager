@@ -46,12 +46,12 @@ function show_logo() {
     echo
 }
 
-# Function to set Shecan DNS
-function set_shecan_dns() {
-    echo -e "${YELLOW}[!] Temporarily setting Shecan DNS...${NC}"
+# Function to set Electro DNS
+function set_electro_dns() {
+    echo -e "${YELLOW}[!] Temporarily setting Electro DNS...${NC}"
     OLD_RESOLV=$(cat /etc/resolv.conf)
-    echo "nameserver 178.22.122.100" > /etc/resolv.conf
-    echo "nameserver 185.51.200.2" >> /etc/resolv.conf
+    echo "nameserver 78.157.42.100" > /etc/resolv.conf
+    echo "nameserver 78.157.42.101" >> /etc/resolv.conf
 }
 
 # Function to restore original DNS
@@ -72,10 +72,10 @@ function try_normal_install() {
     fi
 }
 
-# Function to install Docker with Shecan DNS
-function install_with_shecan() {
-    set_shecan_dns
-    echo -e "${BLUE}[i] Trying Docker installation with Shecan DNS...${NC}"
+# Function to install Docker with Electro DNS
+function install_with_electro() {
+    set_electro_dns
+    echo -e "${BLUE}[i] Trying Docker installation with Electro DNS...${NC}"
     if bash <(curl -sSL https://get.docker.com); then
         restore_old_dns
         return 0
@@ -93,25 +93,25 @@ function install_docker_manual() {
     # Try normal installation first
     show_progress 1 $total_steps "Attempting normal Docker install..."
     if try_normal_install; then
-        echo -e "\n${GREEN}[✓] Docker installed successfully without Shecan DNS${NC}"
+        echo -e "\n${GREEN}[✓] Docker installed successfully without Electro DNS${NC}"
         return 0
     fi
     
-    # If normal install failed, ask to use Shecan
+    # If normal install failed, ask to use Electro
     echo -e "\n${RED}[!] Docker installation failed - possible sanctions issue${NC}"
-    read -p "Do you want to use Shecan DNS for installation? (y/n): " -n 1 -r
+    read -p "Do you want to use Electro DNS for installation? (y/n): " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         echo -e "${RED}[!] Installation aborted. Please install manually.${NC}"
         exit 1
     fi
     
-    # Proceed with Shecan DNS
-    show_progress 2 $total_steps "Installing with Shecan DNS..."
-    if install_with_shecan; then
-        echo -e "\n${GREEN}[✓] Docker installed successfully with Shecan DNS${NC}"
+    # Proceed with Electro DNS
+    show_progress 2 $total_steps "Installing with Electro DNS..."
+    if install_with_electro; then
+        echo -e "\n${GREEN}[✓] Docker installed successfully with Electro DNS${NC}"
     else
-        echo -e "\n${RED}[!] Docker installation failed even with Shecan DNS.${NC}"
+        echo -e "\n${RED}[!] Docker installation failed even with Electro DNS.${NC}"
         exit 1
     fi
     
@@ -205,6 +205,39 @@ function get_ports() {
     RADIUS_ACCT_PORT=${RADIUS_ACCT_PORT:-1813}
 }
 
+# Function to download and import Docker image
+function download_and_import_image() {
+    start_time=$SECONDS
+    total_steps=3
+    
+    show_progress 1 $total_steps "Downloading IBSng Docker image..."
+    IMAGE_URL="https://github.com/aliamg1356/IBSng-manager/releases/download/v1.24/ushkayanet-ibsng.tar"
+    TEMP_FILE="/tmp/ushkayanet-ibsng.tar"
+    
+    # Try normal download first
+    if ! curl -L -o "$TEMP_FILE" "$IMAGE_URL"; then
+        echo -e "\n${RED}[!] Download failed - trying with Electro DNS...${NC}"
+        set_electro_dns
+        if ! curl -L -o "$TEMP_FILE" "$IMAGE_URL"; then
+            restore_old_dns
+            echo -e "\n${RED}[!] Failed to download image even with Electro DNS.${NC}"
+            exit 1
+        fi
+        restore_old_dns
+    fi
+    
+    show_progress 2 $total_steps "Importing Docker image..."
+    if ! docker load -i "$TEMP_FILE"; then
+        echo -e "\n${RED}[!] Failed to import Docker image.${NC}"
+        exit 1
+    fi
+    
+    show_progress 3 $total_steps "Cleaning up..."
+    rm -f "$TEMP_FILE"
+    
+    echo -e "\n${GREEN}[✓] Docker image imported successfully.${NC}"
+}
+
 # Function to create docker-compose file
 function create_docker_compose() {
     start_time=$SECONDS
@@ -219,7 +252,7 @@ version: '3.8'
 
 services:
   ibsng:
-    image: epsil0n/ibsng:latest
+    image: ushkayanet-ibsng
     container_name: ibsng
     ports:
       - "${WEB_PORT}:80"           # Web Port (HTTP)
@@ -353,7 +386,7 @@ function remove() {
     docker network rm ibsng_net 2>/dev/null || true
     
     show_progress 4 $total_steps "Removing Docker image..."
-    docker rmi epsil0n/ibsng:latest 2>/dev/null || true
+    docker rmi ushkayanet-ibsng 2>/dev/null || true
     
     echo -e "\n${GREEN}[✓] IBSng container, network and image removed successfully!${NC}"
 }
@@ -361,33 +394,11 @@ function remove() {
 # Function to run container and show info
 function run_container_and_show_info() {
     start_time=$SECONDS
-    total_steps=3
+    total_steps=2
     
     cd /opt/ibsng
     
-    # Start container
-    show_progress 1 $total_steps "Pulling IBSng image..."
-    if ! docker compose pull; then
-        echo -e "\n${RED}[!] Failed to pull image. Trying with Shecan DNS...${NC}"
-        
-        read -p "Do you want to use Shecan DNS to download the image? (y/n): " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            set_shecan_dns
-            show_progress 2 $total_steps "Retrying with Shecan DNS..."
-            if ! docker compose pull; then
-                restore_old_dns
-                echo -e "${RED}[!] Failed to pull image even with Shecan DNS.${NC}"
-                exit 1
-            fi
-            restore_old_dns
-        else
-            echo -e "${RED}[!] Image pull aborted.${NC}"
-            exit 1
-        fi
-    fi
-    
-    show_progress 3 $total_steps "Starting IBSng container..."
+    show_progress 1 $total_steps "Starting IBSng container..."
     if ! docker compose up -d; then
         echo -e "\n${RED}[!] Container startup failed.${NC}"
         exit 1
@@ -424,6 +435,7 @@ function main() {
             check_docker_installation
             get_public_ip
             get_ports
+            download_and_import_image
             create_docker_compose
             run_container_and_show_info
             ;;
