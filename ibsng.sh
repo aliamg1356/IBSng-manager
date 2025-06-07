@@ -248,8 +248,6 @@ function create_docker_compose() {
     
     show_progress 2 $total_steps "Generating docker-compose file..."
     cat > /opt/ibsng/docker-compose.yml <<EOL
-version: '3.8'
-
 services:
   ibsng:
     image: ushkayanet-ibsng
@@ -258,13 +256,18 @@ services:
       - "${WEB_PORT}:80"           # Web Port (HTTP)
       - "${RADIUS_AUTH_PORT}:1812/udp"      # RADIUS Authentication Port
       - "${RADIUS_ACCT_PORT}:1813/udp"      # RADIUS Accounting Port
-    restart: unless-stopped  # Auto-restart on unexpected stop
+    restart: unless-stopped
     networks:
-      - ibsng_net
+      shared_net:
+        ipv4_address: 172.20.0.2
 
 networks:
-  ibsng_net:
+  shared_net:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+          gateway: 172.20.0.1
 EOL
     
     echo -e "\n${GREEN}[✓] docker-compose file created at /opt/ibsng/docker-compose.yml${NC}"
