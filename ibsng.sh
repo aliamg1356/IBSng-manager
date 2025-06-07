@@ -258,16 +258,11 @@ services:
       - "${RADIUS_ACCT_PORT}:1813/udp"      # RADIUS Accounting Port
     restart: unless-stopped
     networks:
-      shared_net:
-        ipv4_address: 172.20.0.2
+      - ibsng_net
 
 networks:
-  shared_net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/24
-          gateway: 172.20.0.1
+  ibsng_net:
+    driver: bridge    
 EOL
     
     echo -e "\n${GREEN}[✓] docker-compose file created at /opt/ibsng/docker-compose.yml${NC}"
