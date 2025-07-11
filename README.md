@@ -116,7 +116,5 @@ service IBSng start
 ## 📞 پشتیبانی
 
 برای گزارش مشکلات یا پیشنهادات:
-- ایمیل: support@ushkaya-net.ir
-- تلگرام: https://t.me/freegate2tab_bot
 - 
 <p align="center"> <img src="https://img.shields.io/badge/Made%20with-❤️-red" alt="Made with love"> <img src="https://img.shields.io/badge/Powered%20by-Ushkaya%20Net-blue" alt="Powered by Ushkaya Net"> </p>
